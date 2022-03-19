@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Task
-from .models import Target
+
 
 
 def get_home_page(request):
@@ -8,15 +8,21 @@ def get_home_page(request):
 
     return render(request, "task/home.html", {"tasks_list": tasks})
 
-def get_target_page(request):
-    target = Target.objects.all()
 
-    return render(request, "task/home.html", {"list_targets": target})
 
 def get_task(request, task_id):
     task_object = Task.objects.get(id=task_id)
     context = {
-        "id": task_id,
-        "object": task_object
+        "task_id": task_id,
+        "task_object": task_object
     }
     return render(request, "task/task_view.html", context)
+
+def delete_task(request, task_id):
+    try:
+        task = Task.objeqts.get(id=task_id)
+    except Task.DoesNotExist:
+        return redirect("home")
+
+    task.delete()
+    return redirect("home")
